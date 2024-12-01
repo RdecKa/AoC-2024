@@ -41,9 +41,21 @@ func star2(listA []int, listB []int) (similarityScore int) {
 	return
 }
 
-func main() {
-	inputFileName := util.InputFileName(0)
+func solution(starFunc func([]int, []int) int, input int) int {
+	inputFileName := util.InputFileName(input)
 	listA, listB := readInputLists(inputFileName)
-	fmt.Println(star1(listA, listB))
-	fmt.Println(star2(listA, listB))
+	return starFunc(listA, listB)
+}
+
+func Star1(input int) int {
+	return solution(star1, input)
+}
+func Star2(input int) int {
+	return solution(star2, input)
+}
+
+func main() {
+	const input = 0
+	fmt.Println(Star1(input))
+	fmt.Println(Star2(input))
 }
