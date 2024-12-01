@@ -30,8 +30,20 @@ func star1(listA []int, listB []int) (sumOfDiffs int) {
 	return
 }
 
+func star2(listA []int, listB []int) (similarityScore int) {
+	count := make(map[int]int)
+	for _, el := range listB {
+		count[el] += 1
+	}
+	for _, el := range listA {
+		similarityScore += el * count[el]
+	}
+	return
+}
+
 func main() {
 	inputFileName := util.InputFileName(0)
 	listA, listB := readInputLists(inputFileName)
 	fmt.Println(star1(listA, listB))
+	fmt.Println(star2(listA, listB))
 }
