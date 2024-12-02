@@ -82,11 +82,21 @@ func star2(reports []report) (safeReports int) {
 	return
 }
 
-func main() {
-	const input = 0
+func solution(starFunc func([]report) int, input int) int {
 	inputFileName := util.InputFileName(input)
 	reports := readReports(inputFileName)
+	return starFunc(reports)
+}
 
-	fmt.Println(star1(reports))
-	fmt.Println(star2(reports))
+func Star1(input int) int {
+	return solution(star1, input)
+}
+func Star2(input int) int {
+	return solution(star2, input)
+}
+
+func main() {
+	const input = 0
+	fmt.Println(Star1(input))
+	fmt.Println(Star2(input))
 }
