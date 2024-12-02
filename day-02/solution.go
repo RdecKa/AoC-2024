@@ -29,30 +29,53 @@ func readReports(fileName string) (reports []report) {
 	return
 }
 
+func (r report) excludeLevel(idx int) (newReport report) {
+	for i := range r.levels {
+		if i == idx {
+			continue
+		}
+		newReport.levels = append(newReport.levels, r.levels[i])
+	}
+	return
+}
+
 const minDiff = 1
 const maxDiff = 3
 
-func (r report) isGraduallyChanging(allowedMinDiff, allowedMaxDiff int) bool {
+func (r report) isGraduallyChanging(allowedMinDiff, allowedMaxDiff int, allowJoker bool) bool {
 	for i := 1; i < len(r.levels); i++ {
 		diff := r.levels[i] - r.levels[i-1]
 		if diff < allowedMinDiff || diff > allowedMaxDiff {
-			return false
+			if !allowJoker {
+				return false
+			}
+			return r.excludeLevel(i).isGraduallyChanging(allowedMinDiff, allowedMaxDiff, false) ||
+				r.excludeLevel(i-1).isGraduallyChanging(allowedMinDiff, allowedMaxDiff, false)
 		}
 	}
 	return true
 }
 
-func (r report) isGraduallyIncreasing() bool {
-	return r.isGraduallyChanging(minDiff, maxDiff)
+func (r report) isGraduallyIncreasing(allowJoker bool) bool {
+	return r.isGraduallyChanging(minDiff, maxDiff, allowJoker)
 }
 
-func (r report) isGraduallyDecreasing() bool {
-	return r.isGraduallyChanging(-maxDiff, -minDiff)
+func (r report) isGraduallyDecreasing(allowJoker bool) bool {
+	return r.isGraduallyChanging(-maxDiff, -minDiff, allowJoker)
 }
 
 func star1(reports []report) (safeReports int) {
 	for _, r := range reports {
-		if r.isGraduallyIncreasing() || r.isGraduallyDecreasing() {
+		if r.isGraduallyIncreasing(false) || r.isGraduallyDecreasing(false) {
+			safeReports++
+		}
+	}
+	return
+}
+
+func star2(reports []report) (safeReports int) {
+	for _, r := range reports {
+		if r.isGraduallyIncreasing(true) || r.isGraduallyDecreasing(true) {
 			safeReports++
 		}
 	}
@@ -60,9 +83,10 @@ func star1(reports []report) (safeReports int) {
 }
 
 func main() {
-	const input = 1
+	const input = 0
 	inputFileName := util.InputFileName(input)
 	reports := readReports(inputFileName)
 
 	fmt.Println(star1(reports))
+	fmt.Println(star2(reports))
 }
