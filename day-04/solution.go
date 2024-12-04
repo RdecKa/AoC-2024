@@ -51,7 +51,20 @@ func star1(inputString string, gridSize int) (count int) {
 	return
 }
 
+func constructRegexs2(gridSize int) [4]*regexp2.Regexp {
+	re1 := regexp2.MustCompile(fmt.Sprintf(`(?=(M[\S]M[\S\s]{%d}A[\S\s]{%d}S[\S]S))`, gridSize-1, gridSize-1), 0)
+	re2 := regexp2.MustCompile(fmt.Sprintf(`(?=(M[\S]S[\S\s]{%d}A[\S\s]{%d}M[\S]S))`, gridSize-1, gridSize-1), 0)
+	re3 := regexp2.MustCompile(fmt.Sprintf(`(?=(S[\S]M[\S\s]{%d}A[\S\s]{%d}S[\S]M))`, gridSize-1, gridSize-1), 0)
+	re4 := regexp2.MustCompile(fmt.Sprintf(`(?=(S[\S]S[\S\s]{%d}A[\S\s]{%d}M[\S]M))`, gridSize-1, gridSize-1), 0)
+	result := [4]*regexp2.Regexp{re1, re2, re3, re4}
+	return result
+}
+
 func star2(inputString string, gridSize int) (count int) {
+	res := constructRegexs2(gridSize)
+	for _, re := range res {
+		count += countMatches(re, inputString)
+	}
 	return
 }
 
