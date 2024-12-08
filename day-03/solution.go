@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/RdecKa/AoC-2024/util"
 )
@@ -22,24 +23,33 @@ func multiplyAndSum(re regexp.Regexp, s string) (result int) {
 	return
 }
 
-func star1(sections []string) (result int) {
-	validNumberFormat := `[0-9]{1,3}`
-	mulRe := regexp.MustCompile(
-		fmt.Sprintf(`(mul\((%s),(%s)\))`, validNumberFormat, validNumberFormat))
-	for _, s := range sections {
+const validNumberFormat = `[0-9]{1,3}`
+
+var mulRe = regexp.MustCompile(
+	fmt.Sprintf(`(mul\((%s),(%s)\))`, validNumberFormat, validNumberFormat))
+
+func star1(memory string) int {
+	return multiplyAndSum(*mulRe, memory)
+}
+
+func findEnabledSections(memory string) (enabledSections []string) {
+	for _, s := range strings.Split(memory, "do()") {
+		enabledSections = append(enabledSections, strings.Split(s, "don't()")[0])
+	}
+	return
+}
+
+func star2(memory string) (result int) {
+	for _, s := range findEnabledSections(memory) {
 		result += multiplyAndSum(*mulRe, s)
 	}
 	return
 }
 
-func star2(sections []string) int {
-	return 0
-}
-
-func solution(starFunc func([]string) int, input int) int {
+func solution(starFunc func(string) int, input int) int {
 	inputFileName := util.InputFileName(input)
-	sections := readInput(inputFileName)
-	return starFunc(sections)
+	memory := strings.Join(readInput(inputFileName), "")
+	return starFunc(memory)
 }
 
 func Star1(input int) int {
